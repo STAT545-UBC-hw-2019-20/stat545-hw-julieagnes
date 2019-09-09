@@ -3,8 +3,8 @@
 
 There are 5 assignments for this course with the following deadlines:
 
-|Assignment |	Assignment Due Date|
-|-----------------------------------|
+|Assignment     |	Assignment Due Date|
+|---------------|--------------------|
 |Assignment 01	| September 17, 2019|
 |Assignment 02	| September 24, 2019|
 |Assignment 03	| October 01, 2019|
