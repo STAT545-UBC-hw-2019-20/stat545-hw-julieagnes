@@ -17,16 +17,16 @@ There will be a folder created for each assignment, and you can click on it to s
 Please refer to [STAT545 Assignments](https://stat545.stat.ubc.ca/evaluation/assignments/) for more information.
 
 
-# About me
+## About me
 I am a statistician working at UBC for the last 12 years.  A coworker took this course and recommended it to me as most of statisticians in my team use SAS for analysis; R is used mainly for creating figures.  
 
-Some of the type of data I've worked with include:
-- *Genetic data on patients with allergies and related phenotypes
+Some of the data I've worked with include
+- *Genetic data on patients with allergies and related phenotypes*
   - Case-control data
   - Trio data
   - Birth cohort data
 
-- *Demographic and clinical data on patients with cardiovascular disease
+- *Demographic and clinical data on patients with cardiovascular disease*
   - Cohort data
   - Admministrative 
   - Randomized controlled data
