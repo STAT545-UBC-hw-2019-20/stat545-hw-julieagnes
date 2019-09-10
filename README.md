@@ -19,7 +19,7 @@ Please refer to [STAT545 Assignments](https://stat545.stat.ubc.ca/evaluation/ass
 
 ## About me
 I am a statistician working at UBC for the last 12 years.  A coworker took this course and recommended it to me as most of statisticians in my team use SAS for analysis; R is used mainly for creating figures, such as this:
-[](https://user-images.githubusercontent.com/44685673/64574868-ff2e8400-d325-11e9-82db-5cafc5552498.jpg)
+![picture](https://user-images.githubusercontent.com/44685673/64574868-ff2e8400-d325-11e9-82db-5cafc5552498.jpg)
 
 Some of the data I've worked with include
 - *Genetic data on patients with allergies and related phenotypes*
