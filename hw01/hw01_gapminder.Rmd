@@ -3,28 +3,30 @@ title: "hw01_gapminder (Exercise 2)"
 author: by Julie Park
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: 
-  html_document:
-    keep_md: true
-    toc: true
-    toc_float: true
-    theme: cerulean
+  github_document
 
 ---
 
-<br/><br/>
+<br/>
 
-
-```{r load, warning=F, echo=F}
+```{r load_library, warning=F, echo=F}
 library(gapminder)
 library(tibble)
 library(DT)
 ```
 
-## 3 ways to print out gapminder data:
+## Simple overview of the data
+```{r}
+str(gapminder)
+```
+<br/><br/>
+
+## 3 ways to actually print out gapminder data:
 
 ### 1. Convert it as data.frame and use head function 
 ```{r}
 newdat<-data.frame(gapminder)
+print(paste("Number of rows & columns:", paste(dim(newdat),collapse=', ')))
 head(newdat)
 ```
 
@@ -32,14 +34,14 @@ head(newdat)
 
 ### 2. Print out a tibble object
 ```{r Output2}
-as_tibble(gapminder)
+gapminder
 ```
 
 <br/>
 
 ### 3. Use datatable function 
 ```{r}
-datatable(as_tibble(gapminder))
+datatable(gapminder)
 ```
 
 
