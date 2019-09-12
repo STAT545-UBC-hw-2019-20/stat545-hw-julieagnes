@@ -1,0 +1,40 @@
+---
+title: "hw01_gapminder_slides"
+author: by Julie Park
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: 
+  ioslides_presentation:
+    widescreen: true
+---
+
+
+```{r load_library, warning=F, echo=F}
+library(gapminder)
+library(tibble)
+library(DT)
+```
+
+## Simple overview of the data {.smaller}
+```{r}
+str(gapminder)
+```
+
+
+## 3 ways to actually print out gapminder data | 1. Convert it as data.frame and use head function 
+```{r}
+newdat<-data.frame(gapminder)
+print(paste("Number of rows & columns:", paste(dim(newdat),collapse=', ')))
+head(newdat)
+```
+
+## | 2. Print out a tibble object
+```{r Output2}
+gapminder
+```
+
+
+## | 3. Use datatable function {.smaller}
+```{r}
+datatable(gapminder)
+```
+
