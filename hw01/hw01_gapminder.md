@@ -1,7 +1,7 @@
 hw01\_gapminder (Exercise 2)
 ================
 by Julie Park
-September 11, 2019
+September 16, 2019
 
 <br/>
 
