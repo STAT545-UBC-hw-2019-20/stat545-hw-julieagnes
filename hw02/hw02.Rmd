@@ -97,6 +97,7 @@ gapminder %>% count(continent) %>% mutate('%'=round(100*n/sum(n)))
 kable(t21)
 ```
 
+
 Barplots below show the relative difference visually.
 ```{r 2.1.2}
 gapminder %>% 
@@ -133,6 +134,8 @@ gapminder %>% group_by(continent) %>%
   summarize(Min=min(lifeExp), Q1=quantile(lifeExp,0.25), Median=median(lifeExp), Mean=mean(lifeExp), Q3=quantile(lifeExp,0.75), Max=max(lifeExp) )
 kable(t23)
 ```
+
+
 The difference in life expectancy by contient is easier to see in the graph below:
 ```{r}
 gapminder %>% ggplot()+geom_freqpoly(aes(x=lifeExp, y=..density..,color=continent), binwidth=10,center=0)
