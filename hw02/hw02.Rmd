@@ -40,19 +40,18 @@ kable(t2)
 ## 1.3 
 Filter gapminder to all entries that have experienced a drop in life expectancy. Be sure to include a new variable that's the increase in life expectancy in your tibble. 
 
-The following steps will be taken for exercise 1.3:
+The following steps are be taken for exercise 1.3:
 
 1. Make sure the year is in asending order within each country, using group_by() and arrange().
-2. Obtain the lifeExp of the previous year, called prev_lifeExp, using mutate().
-3. Obtain the change from the previous year, using mutate()
-4. Select the entries that have experienced a drop in life expectancy compared to the year before, using filter()
+2. Obtain the lifeExp of the previous year, called prev_lifeExp, using mutate() and lag().
+3. Obtain the change from the previous year, using mutate().
+4. Select the entries that have experienced a drop in life expectancy compared to the year before, using filter().
 ```{r 1.3}
 t3<-
 gapminder %>% group_by(country) %>% arrange(year) %>% 
   mutate(prev_lifeExp=lag(lifeExp), change=lifeExp-prev_lifeExp) %>% 
   filter(change<0)
 t3
-#datatable(t3)
 ```
 
 <br/>
@@ -64,7 +63,6 @@ Filter gapminder so that it shows the max GDP per capita experienced by each cou
 t4<-
 gapminder %>% group_by(country) %>% filter(gdpPercap==max(gdpPercap))
 t4
-#datatable(t4)
 ```
 
 
@@ -136,7 +134,7 @@ kable(t23)
 ```
 
 
-The difference in lifeExp by contient is easier to see in the graph below:
+The difference in lifeExp by contient is easier to see in the graph below.
 ```{r}
 gapminder %>% ggplot()+geom_freqpoly(aes(x=lifeExp, y=..density..,color=continent), binwidth=10,center=0)
 ```
