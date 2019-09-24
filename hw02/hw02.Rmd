@@ -136,7 +136,7 @@ kable(t23)
 ```
 
 
-The difference in life expectancy by contient is easier to see in the graph below:
+The difference in lifeExp by contient is easier to see in the graph below:
 ```{r}
 gapminder %>% ggplot()+geom_freqpoly(aes(x=lifeExp, y=..density..,color=continent), binwidth=10,center=0)
 ```
