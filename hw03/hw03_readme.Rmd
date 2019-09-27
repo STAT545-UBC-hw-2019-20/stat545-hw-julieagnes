@@ -1,8 +1,0 @@
----
-title: "hw03_readme"
-output: github_document
----
-
-For assignment 3, an [html file]](http://julieagnes.github.io/) was created.
-
- 
