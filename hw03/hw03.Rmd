@@ -3,8 +3,7 @@ title: "hw03"
 author: by Julie Park
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: 
-  html_document:
-    keep_md: true
+  html_document
 ---
 
 
@@ -37,7 +36,7 @@ suppressMessages(print(p1))
 Therefore, it would be reasonable to choose a benchmark that differed over time.  The remaining questions were (i) which statistic (e.g. mean vs. mean) should be chosen as a benchmark, and (ii) how often a benchmark should be updated (e.g. annual benchmark or a benchmark by a decade)?  Annual benchmark was not favoured because choosing a benchmark based on data from a single year was subject to a high variability.  A bigger bin (e.g. 10 or 15 years) was considered, instead.
 
 In order to answer these questions, the following histograms were generated.
-```{r option1.2.hist, warning=F, message=F}
+```{r option1.2.hist, warning=F, message=F, figure.width=5, figure.height=2}
 gapminder %>% filter(year==1952) %>% ggplot(aes(lifeExp))+geom_histogram(bins=50) + labs(title='For year 1952')
 gapminder %>% filter(year%in%1952:1957) %>%  ggplot(aes(lifeExp))+geom_histogram(bins=50) + labs(title='For years 1952 & 1957')
 gapminder %>% filter(year%in%1952:1962) %>%  ggplot(aes(lifeExp))+geom_histogram(bins=50) + labs(title='For years 1952, 1957 & 1962')
@@ -77,7 +76,7 @@ datatable(out1)
 <br/> 
 
 ### 1.3 Visualization
-The first graph showed the actual number of countries that fell below the benchmark by contient.  However, a more informative summary statistic would be the percentage of countries within each continent that fell below the benchmark (2nd figure).
+The first graph showed the actual number of countries that fell below the benchmark by continent.  However, a more informative summary statistic would be the percentage of countries within each continent that fell below the benchmark (2nd figure).
 ```{r option1.3}
 out1 %>% ggplot(aes(year,N_lt_benchmark,color=continent))+geom_line()+ labs(title='Number of countries below the benchmark life expectancy over time', x='Year',y='# below benchmark')
 out1 %>% ggplot(aes(year,Percent_lt_benchmark,color=continent))+geom_line()+labs(title='% of countries below the benchmark life expectancy over time', x='Year',y='# below benchmark')
@@ -98,7 +97,7 @@ kable(out2)
 However, what about temporal changes?  Do we want to report maximum and minimum only by continent or also by year?
 ```{r option2,message=F, warning=F}
 p2<-
-gapminder %>% ggplot(aes(year,gdpPercap,color=continent))+ geom_jitter() + geom_smooth() + labs(title='Trajectory of GDP per capita by contient')
+gapminder %>% ggplot(aes(year,gdpPercap,color=continent))+ geom_jitter() + geom_smooth() + labs(title='Trajectory of GDP per capita by continent')
 
 suppressMessages(print(p2))
 ```
