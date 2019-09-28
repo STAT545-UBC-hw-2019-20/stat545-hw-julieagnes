@@ -1,12 +1,10 @@
 Readme
 ================
 
-<pre>
-For assignment 3, the following options were chosen.
-Please refer to the
-[html](https://stat545-ubc-hw-2019-20.github.io/stat545-hw-julieagnes/hw03/hw03.html) page for the output. 
+For assignment 3, the following options were chosen. Please refer to the [html](https://stat545-ubc-hw-2019-20.github.io/stat545-hw-julieagnes/hw03/hw03.html) page for the output.
+
 (Note: *no md file was rendered* because DT::database was used to show big tables, and this function did not display tables properly in a md file.)
-</pre>
+
 Task Option 1
 -------------
 
