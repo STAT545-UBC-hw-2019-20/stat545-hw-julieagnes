@@ -21,24 +21,26 @@ library(sqldf) #for SQL
 Report the absolute and/or relative abundance of countries with low life expectancy over time by continent: Compute some measure of worldwide life expectancy – you decide – a mean or median or some other quantile or perhaps your current age. Then determine how many countries on each continent have a life expectancy less than this benchmark, for each year.
 
 __Steps taken:__
+
 1. Perform the exploratory analysis (EDA) to determine which benchmark to use.
 2. Manipulate data to create lifeExp2 (i.e. below/above benchmark)
-3. Generate tables/figures to show the results.
+3. Generate figures to show the results.
 
-##1. EDA
+### 1.1 EDA
 Based on the plot below, we can tell (i) the life expectancy has increased over time, with a fairly similar trajectory across all continents except for Africa, where the life expectancy plateaued around 1990s, and (ii) the life expectancy differed quite a bit by continent.  
-```{r}
-gapminder %>% ggplot(aes(year,lifeExp))+geom_jitter(aes(color=continent))+
-geom_smooth(aes(color=continent))
+```{r option1.1}
+p1<-gapminder %>% ggplot(aes(year,lifeExp)) + geom_jitter(aes(color=continent)) + geom_smooth(aes(color=continent))
+
+suppressMessages(print(p1))
 ```
 
 Therefore, it would be reasonable to choose a benchmark that differed over time.  The remaining questions were (i) which statistic (e.g. mean vs. mean) should be chosen as a benchmark, and (ii) how often a benchmark should be updated (e.g. annual benchmark or a benchmark by a decade)?  Annual benchmark was not favoured because choosing a benchmark based on data from a single year was subject to a high variability.  A bigger bin (e.g. 10 or 15 years) was considered, instead.
 
 In order to answer these questions, the following histograms were generated.
-```{r warning=F, message=F}
-gapminder %>% filter(year==1952) %>% ggplot(aes(lifeExp))+geom_histogram(bins=50)
-gapminder %>% filter(year%in%1952:1957) %>%  ggplot(aes(lifeExp))+geom_histogram(bins=50)
-gapminder %>% filter(year%in%1952:1967) %>%  ggplot(aes(lifeExp))+geom_histogram(bins=50)
+```{r option1.2.hist, warning=F, message=F}
+gapminder %>% filter(year==1952) %>% ggplot(aes(lifeExp))+geom_histogram(bins=50) + labs(title='For year 1952')
+gapminder %>% filter(year%in%1952:1957) %>%  ggplot(aes(lifeExp))+geom_histogram(bins=50) + labs(title='For years 1952 & 1957')
+gapminder %>% filter(year%in%1952:1962) %>%  ggplot(aes(lifeExp))+geom_histogram(bins=50) + labs(title='For years 1952, 1957 & 1962')
 
 #gapminder %>% filter(year%in%1952:1957 & continent!='Africa') %>%  ggplot(aes(lifeExp))+geom_histogram()
 ```
@@ -54,8 +56,8 @@ kable(bm)
 
 <br/> 
 
-##2. Data manipulation
-Now the benchmark is chosen, the life expectancy can be binarized (i.e. above/below the benchmark).  However, first the benchmark value needed to be added back to the orignal data, using SQL.
+### 1.2 Data manipulation
+Now the benchmark is chosen, the life expectancy can be binarized (i.e. above/below the benchmark).  However, first, the benchmark value needed to be added back to the orignal data, using SQL.
 
 ```{r}
 tmp<-gapminder %>% mutate(Decade=paste(signif(year,digit=3),'s',sep='')) 
@@ -65,20 +67,20 @@ gapminder1<-as_tibble(
 kable(gapminder1[1:10,])
 ```
 
-Then a new variable called lifeExp2 (i.e. above/below the benchmark) was created along with 2 additional variables: N_below for counts and Percent for % of N_below within each continent per year.
+Then a new variable called lifeExp2 (i.e. above/below the benchmark) was created first to create 2 additional variables: N_lt_benchmark for counts and Percent_lt_benchmark for % of N_lt_benchmark within each continent per year.
 ```{r}
 out1<-
-gapminder1 %>% mutate(lifeExp2=lifeExp<Benchmark) %>% group_by(continent,year) %>% summarize(N_below=sum(lifeExp2), N=n(), Percent=round(100*mean(lifeExp2),2)) 
+gapminder1 %>% mutate(lifeExp2=lifeExp<Benchmark) %>% group_by(continent,year) %>% summarize(N_lt_benchmark=sum(lifeExp2), N_total=n(), Percent_lt_benchmark=round(100*mean(lifeExp2),2)) 
 datatable(out1)
 ```
 
 <br/> 
 
-##3. Visualization
+### 1.3 Visualization
 The first graph showed the actual number of countries that fell below the benchmark by contient.  However, a more informative summary statistic would be the percentage of countries within each continent that fell below the benchmark (2nd figure).
-```{r}
-out1 %>% ggplot(aes(year,N_below,color=continent))+geom_line()+ylab('# below benchmark')+xlab('Year')
-out1 %>% ggplot(aes(year,Percent,color=continent))+geom_line()+ylab('% below benchmark')+xlab('Year')
+```{r option1.3}
+out1 %>% ggplot(aes(year,N_lt_benchmark,color=continent))+geom_line()+ labs(title='Number of countries below the benchmark life expectancy over time', x='Year',y='# below benchmark')
+out1 %>% ggplot(aes(year,Percent_lt_benchmark,color=continent))+geom_line()+labs(title='% of countries below the benchmark life expectancy over time', x='Year',y='# below benchmark')
 ```
 
 
@@ -87,24 +89,26 @@ out1 %>% ggplot(aes(year,Percent,color=continent))+geom_line()+ylab('% below ben
 
 # Task Option 2. Get the maximum and minimum of GDP per capita for all continents.
 
+The crude look at the data:
 ```{r}
 out2<-gapminder %>% group_by(continent) %>% summarize(Maximum=max(gdpPercap), Minimum=min(gdpPercap))
 kable(out2)
 ```
 
-However, what about temporal changes?  Do we want to report max/min only by continent or also by year?
-```{r ,message=F, warning=F}
+However, what about temporal changes?  Do we want to report maximum and minimum only by continent or also by year?
+```{r option2,message=F, warning=F}
 p2<-
-gapminder %>% ggplot(aes(year,gdpPercap,color=continent))+ geom_jitter() + geom_smooth()
+gapminder %>% ggplot(aes(year,gdpPercap,color=continent))+ geom_jitter() + geom_smooth() + labs(title='Trajectory of GDP per capita by contient')
 
 suppressMessages(print(p2))
 ```
-There has been an increase in GDP per capital. We want to report by continent and also by year.  In addition, a couple of extreme outliers were noted, all belonging to Asia. 
+
+There has been an increase in GDP per capita over the years; therefore, it would be more informative to report GDP per capita by continent and year.  In addition, a couple of extreme outliers were noted, all belonging to Asia.  A closer look at these extreme values (table below) showed that they were entries from Kuwait, from 1952 to 1977.
 ```{r}
 kable(gapminder %>% filter(gdpPercap>59000))
 ```
 
-They were entries from Kuwait from 1952 to 1977.  Then the minimum/maximum of GDP per Capital could be summarized by continent and by year.
+The minimum/maximum of GDP per Capita could be summarized by continent and by year.
 
 ```{r}
 out21<-gapminder %>% group_by(continent,year) %>% summarize(Maximum=max(gdpPercap), Minimum=min(gdpPercap))
@@ -118,21 +122,21 @@ datatable(out21)
 
 # Task Option 3. Look at the spread of GDP per capita within the continents.
 
-A crude look at the distributin of GDP per capita:
+A crude look at the distribution of GDP per capita:
 ```{r}
 out3<-
 gapminder %>% group_by(continent) %>% summarize(Min=min(gdpPercap), Mean=mean(gdpPercap), Median=median(gdpPercap), Max=max(gdpPercap))
 kable(out3)
 ```
 
-The graph overlaying the continents was produced above.  Now a seprate plot by continent could be shown for more details.
+The graph overlaying the continents was produced in the section above (Task Option 2).  Now a seprate plot by continent could be shown for more details.
 
-```{r}
-gapminder %>% ggplot(aes(year,gdpPercap))+geom_jitter()+facet_wrap(~continent,nrow=1)
+```{r option3.1, fig.width = 13, fig.height = 3}
+gapminder %>% ggplot(aes(year,gdpPercap))+ geom_jitter()+ facet_wrap(~continent,nrow=1)+ labs(title='Scatter plot of GDP per capita over time by continent')
 ```
 
-The figure below showed a trajectory of GDP per Capita for each country within a continent for more information.
-```{r}
-gapminder %>% ggplot(aes(year,gdpPercap)) + geom_line(aes(group=country), alpha=0.3)+ facet_wrap(~continent,nrow=1)
+The figure below showed a trajectory of GDP per capita for each country within a continent for more information.
+```{r option3.2, fig.width = 13, fig.height = 3}
+gapminder %>% ggplot(aes(year,gdpPercap)) + geom_line(aes(group=country), alpha=0.3)+ facet_wrap(~continent,nrow=1) + labs(title='Trajectory of GDP per capita for each country by continent')
 ```
 
