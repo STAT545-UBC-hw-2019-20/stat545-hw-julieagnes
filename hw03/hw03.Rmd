@@ -3,8 +3,9 @@ title: "hw03"
 author: by Julie Park
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: 
-  html_document
----
+  html_document:
+    toc: true
+---    
 
 
 ```{r, warning=FALSE, echo=FALSE, message=F}
@@ -14,6 +15,7 @@ library(datasets)
 library(DT) #For datatable()
 library(knitr) #For kable()
 library(sqldf) #for SQL
+library(ggridges)
 ```
 
 # Task Option 1
@@ -21,8 +23,8 @@ Report the absolute and/or relative abundance of countries with low life expecta
 
 __Steps taken:__
 
-1. Perform the exploratory analysis (EDA) to determine which benchmark to use.
-2. Manipulate data to create lifeExp2 (i.e. below/above benchmark)
+1. Perform the exploratory data analysis (EDA) to determine which benchmark to use.
+2. Manipulate data to create lifeExp2 (i.e. below/above benchmark) and summarize data at the continent level: number of countries below the benchnark (N_lt_benchmark) and percentage of countries below the benchnark (Percent_lt_benchmark) within each continent, given a year.
 3. Generate figures to show the results.
 
 ### 1.1 EDA
@@ -59,14 +61,14 @@ kable(bm, format='markdown')
 Now the benchmark is chosen, the life expectancy can be binarized (i.e. above/below the benchmark).  However, first, the benchmark value needed to be added back to the orignal data, using SQL.
 
 ```{r}
-tmp<-gapminder %>% mutate(Decade=paste(signif(year,digit=3),'s',sep='')) 
+tmp<-gapminder %>% mutate(Decade=paste((year-year%%10),'s',sep='')) 
 gapminder1<-as_tibble(
             sqldf('select a.*,b.Benchmark from tmp as a left join 
                           bm as b on a.Decade=b.Decade'))
 kable(gapminder1[1:10,], format='markdown')
 ```
 
-Then a new variable called lifeExp2 (i.e. above/below the benchmark) was created first to create 2 additional variables: N_lt_benchmark for counts and Percent_lt_benchmark for % of N_lt_benchmark within each continent per year.
+Then a new variable called lifeExp2 (i.e. above/below the benchmark) was created to summarize data by continent and by year: number of countries below the benchnark (N_lt_benchmark) and percentage of countries below the benchnark (Percent_lt_benchmark) within each continent in a given year.
 ```{r}
 out1<-
 gapminder1 %>% mutate(lifeExp2=lifeExp<Benchmark) %>% group_by(continent,year) %>% summarize(N_lt_benchmark=sum(lifeExp2), N_total=n(), Percent_lt_benchmark=round(100*mean(lifeExp2),2)) 
@@ -88,13 +90,21 @@ out1 %>% ggplot(aes(year,Percent_lt_benchmark,color=continent))+geom_line()+labs
 
 # Task Option 2. Get the maximum and minimum of GDP per capita for all continents.
 
-The crude look at the data:
+The overall maximum and minimum across all continents:
+```{r}
+out20<-as.array(summary(gapminder$gdpPercap)[c('Max.','Min.')])
+kable(t(out20))
+```
+
+
+The maximum and minimum by continent were summarized in the table below:
 ```{r}
 out2<-gapminder %>% group_by(continent) %>% summarize(Maximum=max(gdpPercap), Minimum=min(gdpPercap))
 kable(out2, format='markdown')
 ```
+So now we know the global minimum of GDP per capita belonged to Africa, and the global maximum to Asia.
 
-However, what about temporal changes?  Do we want to report maximum and minimum only by continent or also by year?
+Then, what about the temporal changes?  Do we want to report maximum and minimum only by continent or also by year?
 ```{r option2,message=F, warning=F}
 p2<-
 gapminder %>% ggplot(aes(year,gdpPercap,color=continent))+ geom_jitter() + geom_smooth() + labs(title='Trajectory of GDP per capita by continent')
@@ -121,21 +131,27 @@ datatable(out21)
 
 # Task Option 3. Look at the spread of GDP per capita within the continents.
 
-A crude look at the distribution of GDP per capita:
+The crude look at the data:
+```{r}
+gapminder %>% ggplot(aes(gdpPercap,continent))+geom_density_ridges()+geom_point(alpha=0.2) 
+```
+
+It looked like Europe, Oceania and Asia had much more spread of data than America and Afria.  To quantify the spread of GDP per capita, the summary statistics table was created below:
 ```{r}
 out3<-
-gapminder %>% group_by(continent) %>% summarize(Min=min(gdpPercap), Mean=mean(gdpPercap), Median=median(gdpPercap), Max=max(gdpPercap))
+gapminder %>% group_by(continent) %>% summarize(Min=min(gdpPercap), Mean=mean(gdpPercap), Q1=quantile(gdpPercap,0.25), Median=median(gdpPercap), Q3=quantile(gdpPercap, 0.75), Max=max(gdpPercap))
 kable(out3, format='markdown')
 ```
 
-The graph overlaying the continents was produced in the section above (Task Option 2).  Now a seprate plot by continent could be shown for more details.
+These statistics can always be shown visually, using boxplots.
 
-```{r option3.1, fig.width = 13, fig.height = 3}
-gapminder %>% ggplot(aes(year,gdpPercap))+ geom_jitter()+ facet_wrap(~continent,nrow=1)+ labs(title='Scatter plot of GDP per capita over time by continent')
+```{r options3.1}
+gapminder %>% ggplot(aes(continent,gdpPercap))+geom_boxplot() +
+  labs(title='Boxplot of GDP per capita by continent (including all entries)')
 ```
 
-The figure below showed a trajectory of GDP per capita for each country within a continent for more information.
-```{r option3.2, fig.width = 13, fig.height = 3}
-gapminder %>% ggplot(aes(year,gdpPercap)) + geom_line(aes(group=country), alpha=0.3)+ facet_wrap(~continent,nrow=1) + labs(title='Trajectory of GDP per capita for each country by continent')
+In the earlier section, it was shown that the outliers in Asia belonged to Kuwait, from 1952 to 1977.  The plots can be zoomed in by excluding these outliers.  Note that excluding 6 extreme points in Asia did not alter the median and interquartile range of Asia significantly (data not shown).
+```{r option3.2}
+gapminder %>% filter(!(country=='Kuwait' & year%in%1952:1977)) %>%  ggplot(aes(continent,gdpPercap))+geom_boxplot() + labs(title='Boxplot of GDP per capita by continent (excluding extreme outliers)')
 ```
-
+Now it is easier to see the difference in the median and the interquartile range (i.e. hinges of a box) as well as the outliers by continent.
