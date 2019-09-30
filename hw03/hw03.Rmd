@@ -27,8 +27,10 @@ __Steps taken:__
 2. Manipulate data to create lifeExp2 (i.e. below/above benchmark) and summarize data at the continent level: number of countries below the benchnark (N_lt_benchmark) and percentage of countries below the benchnark (Percent_lt_benchmark) within each continent, given a year.
 3. Generate figures to show the results.
 
+<br/>
 ### 1.1 EDA
 Based on the plot below, we can tell (i) the life expectancy has increased over time, with a fairly similar trajectory across all continents except for Africa, where the life expectancy plateaued around 1990s, and (ii) the life expectancy differed quite a bit by continent.  
+
 ```{r option1.1}
 p1<-gapminder %>% ggplot(aes(year,lifeExp)) + geom_jitter(aes(color=continent)) + geom_smooth(aes(color=continent))
 
@@ -37,6 +39,7 @@ suppressMessages(print(p1))
 
 Therefore, it would be reasonable to choose a benchmark that differed over time.  The remaining questions were (i) which statistic (e.g. mean vs. mean) should be chosen as a benchmark, and (ii) how often a benchmark should be updated (e.g. annual benchmark or a benchmark by a decade)?  Annual benchmark was not favoured because choosing a benchmark based on data from a single year was subject to a high variability.  A bigger bin (e.g. 10 or 15 years) was considered, instead.
 
+<br/>
 In order to answer these questions, the following histograms were generated.
 ```{r option1.2.hist, warning=F, message=F, figure.width=5, figure.height=2}
 gapminder %>% filter(year==1952) %>% ggplot(aes(lifeExp))+geom_histogram(bins=50) + labs(title='For year 1952')
@@ -48,7 +51,7 @@ gapminder %>% filter(year%in%1952:1962) %>%  ggplot(aes(lifeExp))+geom_histogram
 
 The histograms showed that the life expectancy had a bi-modal distribution (i.e. mean is not a good choice).  The first hump was mainly due to the countries in Africa (graph not shown).  As more years of data were added, the second hump became more pronounced. A decade seemed to be a good starting interval of choice.  Therefore, a median (50th percentile) by decade was selected as a benchmark.  Note that the same benchmark would be applied across all continents.  Also, even of a benchmark value was chosen to remain constant within each decade, the boolean value (above/below benchmark) was created for each year (i.e each row of the original data).
 
-
+<br/>
 The actual values of these benchmarks were summarized in the table below:
 ```{r}
 bm<-gapminder %>% mutate(Decade=paste(signif(year,digit=3),'s',sep='')) %>% group_by(Decade) %>% summarize(Benchmark=median(lifeExp))
@@ -68,6 +71,7 @@ gapminder1<-as_tibble(
 kable(gapminder1[1:10,], format='markdown')
 ```
 
+<br/>
 Then a new variable called lifeExp2 (i.e. above/below the benchmark) was created to summarize data by continent and by year: number of countries below the benchnark (N_lt_benchmark) and percentage of countries below the benchnark (Percent_lt_benchmark) within each continent in a given year.
 ```{r}
 out1<-
