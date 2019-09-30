@@ -90,13 +90,13 @@ out1 %>% ggplot(aes(year,Percent_lt_benchmark,color=continent))+geom_line()+labs
 
 # Task Option 2. Get the maximum and minimum of GDP per capita for all continents.
 
-The overall maximum and minimum across all continents:
+The overall maximum and minimum of GDP per capital across all continents:
 ```{r}
 out20<-as.array(summary(gapminder$gdpPercap)[c('Max.','Min.')])
 kable(t(out20))
 ```
 
-
+<br/>
 The maximum and minimum by continent were summarized in the table below:
 ```{r}
 out2<-gapminder %>% group_by(continent) %>% summarize(Maximum=max(gdpPercap), Minimum=min(gdpPercap))
@@ -117,7 +117,8 @@ There has been an increase in GDP per capita over the years; therefore, it would
 kable(gapminder %>% filter(gdpPercap>59000), format='markdown')
 ```
 
-The minimum/maximum of GDP per Capita could be summarized by continent and by year.
+<br/>
+The maximum and minimum of GDP per Capita were summarized by continent and by year.
 
 ```{r}
 out21<-gapminder %>% group_by(continent,year) %>% summarize(Maximum=max(gdpPercap), Minimum=min(gdpPercap))
@@ -136,22 +137,25 @@ The crude look at the data:
 gapminder %>% ggplot(aes(gdpPercap,continent))+geom_density_ridges()+geom_point(alpha=0.2) 
 ```
 
-It looked like Europe, Oceania and Asia had much more spread of data than America and Afria.  To quantify the spread of GDP per capita, the summary statistics table was created below:
+It looked like Europe, Oceania and Asia had much more spread of data than Americas and Afria.  
+
+<br/>
+To quantify the spread of GDP per capita, the summary statistics table was created below:
 ```{r}
 out3<-
 gapminder %>% group_by(continent) %>% summarize(Min=min(gdpPercap), Mean=mean(gdpPercap), Q1=quantile(gdpPercap,0.25), Median=median(gdpPercap), Q3=quantile(gdpPercap, 0.75), Max=max(gdpPercap))
 kable(out3, format='markdown')
 ```
 
-These statistics can always be shown visually, using boxplots.
-
+Boxplots are always more informative than a summary table above:
 ```{r options3.1}
 gapminder %>% ggplot(aes(continent,gdpPercap))+geom_boxplot() +
   labs(title='Boxplot of GDP per capita by continent (including all entries)')
 ```
 
-In the earlier section, it was shown that the outliers in Asia belonged to Kuwait, from 1952 to 1977.  The plots can be zoomed in by excluding these outliers.  Note that excluding 6 extreme points in Asia did not alter the median and interquartile range of Asia significantly (data not shown).
+In the earlier section, it was shown that the outliers in Asia belonged to Kuwait, from 1952 to 1977.  The figure can be zoomed in by excluding these outliers.  Note that excluding 6 extreme points in Asia did not alter the median and interquartile range of Asia significantly (data not shown).
 ```{r option3.2}
 gapminder %>% filter(!(country=='Kuwait' & year%in%1952:1977)) %>%  ggplot(aes(continent,gdpPercap))+geom_boxplot() + labs(title='Boxplot of GDP per capita by continent (excluding extreme outliers)')
 ```
+
 Now it is easier to see the difference in the median and the interquartile range (i.e. hinges of a box) as well as the outliers by continent.
