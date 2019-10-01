@@ -1,0 +1,85 @@
+---
+title: "hw04"
+author: by Julie Park
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: 
+  html_document:
+    toc: true
+---    
+
+```{r, warning=FALSE, echo=FALSE, message=F}
+library(tidyverse)
+library(gapminder)
+library(datasets)
+library(DT) #For datatable()
+library(knitr) #For kable()
+library(sqldf) #for SQL
+library(ggridges)
+```
+
+#Exercise 1: Univariate Data Reshaping.  (Univariate Option 1)
+
+## 1. Make a tibble with one row per year, and columns for life expectancy for two or more countries.
+```{r}
+t1_wide<-gapminder %>% filter(country %in% c('Romania','Canada')) %>% 
+  pivot_wider(id_cols=year, names_from=country, values_from=lifeExp)
+kable(t1_wide, format='markdown')
+```
+<br/>
+
+## 2. Take advantage of this new data shape to scatterplot life expectancy for one country against that of another.
+```{r, Fig1}
+f1<-t1_wide %>% ggplot(aes(Canada,Romania,color=year)) + geom_point() + geom_smooth()
+
+suppressMessages(print(f1))
+```
+<br/>
+
+## 3. Re-lengthen the data.
+```{r}
+t1_long<-t1_wide %>% 
+  pivot_longer(cols=-year, names_to='country', values_to='lifeExp') %>% select(country, year, lifeExp) #to set the order of variables same order as the original data
+datatable(t1_long)
+```
+
+<br/><br/>
+
+# Exercise 2: Multivariate Data Reshaping (Multivariate Option 1)
+## 1. Make a tibble with one row per year, and columns for life expectancy and GDP per capita (or two other numeric variables) for two or more countries.
+
+```{r}
+t2_wide<-
+gapminder %>% filter(country%in%c('Canada','Romania')) %>%     
+          pivot_wider(id_cols=year, names_from =country,         
+                     values_from=c(lifeExp,gdpPercap), names_sep='_')
+
+datatable(t2_wide)
+```
+
+
+## 2. Re-lengthen the data.
+```{r}
+t2_long<- t2_wide %>% 
+  pivot_longer(cols=-year, 
+               names_to=c('.value','country'), #order of names_to matters
+               values_to=c(lifeExp, gdpPercap),names_sep='_')
+datatable(t2_long)
+```
+
+<br/><br/>
+
+# Exercise 3: Table Joins
+
+First, two data sets were imported:
+```{r}
+guest <- read_csv("https://raw.githubusercontent.com/STAT545-UBC/Classroom/master/data/wedding/attend.csv")
+email <- read_csv("https://raw.githubusercontent.com/STAT545-UBC/Classroom/master/data/wedding/emails.csv")
+```
+
+
+## 3.1. For each guest in the guestlist (guest tibble), add a column for email address, which can be found in the email tibble.
+
+## 3.2 Who do we have emails for, yet are not on the guestlist?
+
+## 3.3 Make a guestlist that includes everyone we have emails for (in addition to those on the original guestlist).
+
