@@ -108,8 +108,9 @@ Two ways to answer the question above were considered: using setdiff and joins.
 ```{r}
 setdiff(unique(email_new$name),unique(guest$name))
 
-email_new %>% left_join(guest,by='name') %>% filter(is.na(party)) %>% select(name, email)
+email_new %>% left_join(guest,by='name') %>% filter(is.na(party)) %>% select(name, email) %>% kable()
 ```
+
 Both methods indicated 3 people had emails but were not on the guestlist.
 
 <br>
@@ -118,7 +119,8 @@ Both methods indicated 3 people had emails but were not on the guestlist.
 
 Since the original guestlist needed to be updated by adding people who had emails, full_join was considered.
 ```{r}
-guest %>% full_join(email_new, by='name')
+guest %>% full_join(email_new, by='name') %>% datatable()
 ```
+
 As expected, the tibble above included 33 rows: 30 from guest tibble and 3 additional names identified in section 3.2.
 
