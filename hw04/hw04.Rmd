@@ -16,37 +16,45 @@ library(knitr) #For kable()
 library(sqldf) #for SQL
 library(ggridges)
 ```
+<br><br>
 
 #Exercise 1: Univariate Data Reshaping.  (Univariate Option 1)
 
-## 1. Make a tibble with one row per year, and columns for life expectancy for two or more countries.
+## 1.1 Make a tibble with one row per year, and columns for life expectancy for two or more countries.
 ```{r}
 t1_wide<-gapminder %>% filter(country %in% c('Romania','Canada')) %>% 
-  pivot_wider(id_cols=year, names_from=country, values_from=lifeExp)
+  pivot_wider(id_cols=year, names_from=country, values_from=lifeExp) 
 kable(t1_wide, format='markdown')
 ```
 <br/>
 
-## 2. Take advantage of this new data shape to scatterplot life expectancy for one country against that of another.
+## 1.2 Take advantage of this new data shape to scatterplot life expectancy for one country against that of another.
+
+The scatter plot of life expectancy of Romana vs. Canada was created using geom_point.  Year legend indicated that the data point from 1950s was on the far left, data point from 2000s on the far right. 
+
+geom_smooth() was, then, added to show the relationship between the life expectancy of Romania and Canada.  The smooth line indicated that the life expectancy of Romania plateaued from the 1970s to 1990s while the life expectancy of Canada continuously increased over time.
 ```{r, Fig1}
-f1<-t1_wide %>% ggplot(aes(Canada,Romania,color=year)) + geom_point() + geom_smooth()
+f1<-t1_wide %>% ggplot(aes(Canada,Romania,color=year)) + 
+  geom_point() + geom_smooth() +labs(title='Life expectancy of Romania vs. Canada')
 
 suppressMessages(print(f1))
 ```
 <br/>
 
-## 3. Re-lengthen the data.
+## 1.3 Re-lengthen the data.
+pivot_longer function was used to re-lengthen the data along with select function to mimic the order of variables in the original data.
 ```{r}
-t1_long<-t1_wide %>% 
-  pivot_longer(cols=-year, names_to='country', values_to='lifeExp') %>% select(country, year, lifeExp) #to set the order of variables same order as the original data
-datatable(t1_long)
+t1_wide %>% 
+  pivot_longer(cols=-year, names_to='country', values_to='lifeExp') %>% select(country, year, lifeExp) %>% datatable
+
 ```
 
 <br/><br/>
 
 # Exercise 2: Multivariate Data Reshaping (Multivariate Option 1)
-## 1. Make a tibble with one row per year, and columns for life expectancy and GDP per capita (or two other numeric variables) for two or more countries.
+## 2.1 Make a tibble with one row per year, and columns for life expectancy and GDP per capita (or two other numeric variables) for two or more countries.
 
+Again two countries (Canada and Romania) were selected for this task.
 ```{r}
 t2_wide<-
 gapminder %>% filter(country%in%c('Canada','Romania')) %>%     
@@ -57,13 +65,14 @@ datatable(t2_wide)
 ```
 
 
-## 2. Re-lengthen the data.
+## 2.2 Re-lengthen the data.
+pivot_longer function was used to re-lengthen the data, to mimic the dat acreated in section 2.1.  One thing that I noticed was that given a "multivariate" pivotting, the order of variables in names_to option matters (i.e. names_to=c('country','.value') resulted in a different output table).
 ```{r}
-t2_long<- t2_wide %>% 
+t2_wide %>% 
   pivot_longer(cols=-year, 
-               names_to=c('.value','country'), #order of names_to matters
-               values_to=c(lifeExp, gdpPercap),names_sep='_')
-datatable(t2_long)
+               names_to=c('.value','country'), 
+               values_to=c(lifeExp, gdpPercap),names_sep='_') %>% datatable
+
 ```
 
 <br/><br/>
@@ -79,7 +88,37 @@ email <- read_csv("https://raw.githubusercontent.com/STAT545-UBC/Classroom/maste
 
 ## 3.1. For each guest in the guestlist (guest tibble), add a column for email address, which can be found in the email tibble.
 
+First, the email tibble was manipulated such that there was 1 row per guest.  Then, the name variable in email tibble was updated to be the same as the corresponding variable in guest tibble.
+```{r}
+email_new<-email %>% separate_rows(guest,sep=', ') %>% rename(name=guest)
+
+```
+
+Then a new tibble called guest1 was created with email address attached to it.
+```{r}
+guest1<-guest %>% left_join(email_new, by='name')
+datatable(guest1)
+```
+
+<br>
+
 ## 3.2 Who do we have emails for, yet are not on the guestlist?
 
+Two ways to answer the question above were considered: using setdiff and joins.
+```{r}
+setdiff(unique(email_new$name),unique(guest$name))
+
+email_new %>% left_join(guest,by='name') %>% filter(is.na(party)) %>% select(name, email)
+```
+Both methods indicated 3 people had emails but were not on the guestlist.
+
+<br>
+
 ## 3.3 Make a guestlist that includes everyone we have emails for (in addition to those on the original guestlist).
+
+Since the original guestlist needed to be updated by adding people who had emails, full_join was considered.
+```{r}
+guest %>% full_join(email_new, by='name')
+```
+As expected, the tibble above included 33 rows: 30 from guest tibble and 3 additional names identified in section 3.2.
 
