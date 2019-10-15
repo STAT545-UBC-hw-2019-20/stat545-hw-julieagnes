@@ -23,7 +23,7 @@ Read through the blog post by Malcolm Barrett where he outlines why one should u
 
 **Task: In your own words, summarize the value of the here::here package in 250 words or fewer.**
 
-Even though I have used R for years, I did not use `setwd()`, let alone `getwd()`.  I have defined the **entire path** where the dataset was called from or was to be saved into. To get around the issue of **using back/foward slashes** to define a path, I saved 2 paths: one for MAC and one for PC with comments so whoever runs my code knew which path to select.  Come to think of it, it was rather tedious having to define paths twice.  
+Even though I have used R for years, I did not use `setwd()`, let alone `getwd()`.  I have defined the **entire path** where the dataset was called from or was to be saved into. To get around the issue of **using back/forward slashes** to define a path, I saved 2 paths: one for MAC and one for PC with comments so whoever runs my code knew which path to select.  Come to think of it, it was rather tedious having to define paths twice.  
 
 My way of coding was ok until I had a client who took my code and tried to run it without success because he was not on the same server as my coworkers who I normally shared my code with.
 
@@ -157,7 +157,9 @@ table(gapminder==gapminder4hw)
 **Task: Create a side-by-side plot and juxtapose your first attempt (show the original figure as-is) with a revised attempt after some time spent working on it and implementing principles of effective plotting principles. Comment and reflect on the differences.**
 
 <br/><br/>
-I've extracted a figure from HW02.  On the left hand side, this figure was created for HW02.
+I've extracted a figure from HW02 (left hand side of the figure below).  
+Then I worked on the background and axes to make the histrogram stand out more.  In addition, various options within `geom_historam` were used to make histograms more informative and easier to see.
+
 ```{r}
 f1<-gapminder %>% ggplot(aes(x=lifeExp))+
   geom_histogram(binwidth=10,center=0)+
@@ -168,8 +170,10 @@ f2<-gapminder %>% ggplot(aes(x=lifeExp))+
   #theme_minimal()+theme_classic()+
 
   theme(panel.border = element_blank(), panel.background=element_blank(),
-        panel.grid.major.y = element_line(colour='light grey'), panel.grid.minor.y = element_line(colour='light grey'), 
+        panel.grid.major.y = element_line(colour='light grey'), 
+        panel.grid.minor.y = element_line(colour='light grey'), 
         axis.line = element_line(size = 0.5, colour = "black"))+
+  
   labs(title='Updated', x='Life expectancy (year)', y='N' )
 
 grid.arrange(f1, f2, nrow=1)
