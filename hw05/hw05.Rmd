@@ -187,14 +187,21 @@ grid.arrange(f1, f2, nrow=1)
 
 **Then, load and embed that file into your report.**
 
+<br/>
+
 The most recent figure was saved as Unpdate.tiff using `ggsave`.
 ```{r}
-ggsave("Updated.tiff", width = 10, height = 10, units = "cm")
+ggsave("Updated.jpg", width = 10, height = 10, units = "cm")
 
 ```
 
+<br/>
+
 Then, it was embedded to this report using md script: 
-`![Loading back the exported image](Updated.tiff)`. 
-![Loading back the exported image](Updated.tiff)
+`![Loading back the exported image](Updated.jpg)`. 
+
+**Note to myself** Apparently, pandoc supports PNG and JPG only.  So when I first saved the file as tiff, the image was embedded successfully in my html file locally, but not when it was uploaded to github.
+
+![Loading back the exported image](Updated.jpg)
 
 
