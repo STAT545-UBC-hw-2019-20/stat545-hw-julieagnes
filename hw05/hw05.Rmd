@@ -194,7 +194,7 @@ ggsave("Updated.tiff", width = 10, height = 10, units = "cm")
 ```
 
 Then, it was embedded to this report using md script: 
-`![Loading back the exported image](./Updated.tiff)`. 
-![Loading back the exported image](./Updated.tiff)
+`![Loading back the exported image](Updated.tiff)`. 
+![Loading back the exported image](Updated.tiff)
 
 
