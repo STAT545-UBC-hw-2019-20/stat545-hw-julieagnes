@@ -157,10 +157,36 @@ table(gapminder==gapminder4hw)
 **Task: Create a side-by-side plot and juxtapose your first attempt (show the original figure as-is) with a revised attempt after some time spent working on it and implementing principles of effective plotting principles. Comment and reflect on the differences.**
 
 <br/><br/>
+I've extracted a figure from HW02.  On the left hand side, this figure was created for HW02.
+```{r}
+f1<-gapminder %>% ggplot(aes(x=lifeExp))+
+  geom_histogram(binwidth=10,center=0)+
+  labs(title='Original')
+
+f2<-gapminder %>% ggplot(aes(x=lifeExp))+
+  geom_histogram(binwidth=10,center=0, color='black', fill='black', alpha=0.7)+
+  #theme_minimal()+theme_classic()+
+
+  theme(panel.border = element_blank(), panel.background=element_blank(),
+        panel.grid.major.y = element_line(colour='light grey'), panel.grid.minor.y = element_line(colour='light grey'), 
+        axis.line = element_line(size = 0.5, colour = "black"))+
+  labs(title='Updated', x='Life expectancy (year)', y='N' )
+
+grid.arrange(f1, f2, nrow=1)
+```
+
+
 
 #Exercise 5: Writing figures to file
 
 **Task: Use ggsave() to explicitly save a plot to file. Include the exported plot as part of your repository and assignment.**
 
+**Then, load and embed that file into your report**
+
+```{r}
+ggsave("Updated.tiff", width = 10, height = 10, units = "cm")
+
+```
 
 
+![Loading back the image exported by `ggsave`](./updated.tiff)
