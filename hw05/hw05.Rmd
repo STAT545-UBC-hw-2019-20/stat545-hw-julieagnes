@@ -185,12 +185,16 @@ grid.arrange(f1, f2, nrow=1)
 
 **Task: Use ggsave() to explicitly save a plot to file. Include the exported plot as part of your repository and assignment.**
 
-**Then, load and embed that file into your report**
+**Then, load and embed that file into your report.**
 
+The most recent figure was saved as Unpdate.tiff using `ggsave`.
 ```{r}
 ggsave("Updated.tiff", width = 10, height = 10, units = "cm")
 
 ```
 
+Then, it was embedded to this report using md script: 
+`![Loading back the exported image](./Updated.tiff)`. 
+![Loading back the exported image](./Updated.tiff)
 
-![Loading back the image exported by `ggsave`](https://github.com/STAT545-UBC-hw-2019-20/stat545-hw-julieagnes/blob/master/hw05/Updated.tiff)
+
